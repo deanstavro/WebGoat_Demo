@@ -1,25 +1,6 @@
 name: "Build"
 on:
-  pull_request:
-    paths-ignore:
-      - '.txt'
-      - '*.MD'
-      - '*.md'
-      - 'LICENSE'
-      - 'docs/**'
-  push:
-    branches:
-      - master
-      - develop
-      - release/*
-    tags-ignore:
-      - '*'
-    paths-ignore:
-      - '.txt'
-      - '*.MD'
-      - '*.md'
-      - 'LICENSE'
-      - 'docs/**'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -44,15 +25,3 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Build with Maven
         run: mvn clean install
-
-  notify-slack:
-    if: github.event_name == 'push' && (success() || failure())
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Slack workflow notification"
-        uses: Gamesight/slack-workflow-status@master
-        with:
-          repo_token: ${{secrets.GITHUB_TOKEN}}
-          slack_webhook_url: ${{secrets.SLACK_WEBHOOK_URL}}
